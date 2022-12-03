@@ -23,40 +23,32 @@ int compare_id(string s, string s1){
 	return id.compare(id1);
 }
 
-int partition(vector<string> &v, int l, int r){
-	int i = l - 1, j = r + 1;
-	string pivot = v[rand()%(r - l + 1) + l];
-	while(true){
-		do{
-			i++;
-		}while(compare_id(v[i], pivot) == -1);
-		do{
-			j--;
-		}while(compare_id(v[j], pivot) == 1);
-		if(i < j) swap(v[i], v[j]);
-		else return j;
-	}
-}
-
-void quick_sort(vector<string> &v, int l, int r){
+void quick_sort(vector<int> &v, int l, int r){
 	if(l >= r) return;
-	int pivot = partition(v, l, r);
-	quick_sort(v, l, pivot);
-	quick_sort(v, pivot + 1, r);
-}
-
-void read_data_from_file(vector<string> &result, ifstream& file_in){
-	string x;
-	while(!file_in.eof()){
-		getline(file_in, x);
-		result.push_back(x);
+	string pivot = v[rand()%(r - l + 1) + l];
+	int i = l, j = r;
+	while(i <= j){
+		while(compare_id(v[i], pivot) == -1){
+			i++;
+		}
+		while(compare_id(v[j], pivot) == 1){
+			j--;
+		}
+		if(i <= j){
+			if(i < j) swap(v[i], v[j]);
+			i++; j--;
+		}
 	}
-	file_in.close();
+	quick_sort(v, l, j);
+	quick_sort(v, i, r);
 }
 
 void write_data_from_vector_into_file(vector<string> &result, ofstream &file_out){
-	for(auto it : result){
-		file_out << it << endl;
+	for(int  i = 0; i < 1000000, i++){
+		file_out << result[i];
+		if( i != 1000000 - 1){
+			file_out << endl;
+		}
 	}
 	result.clear();
 	file_out.close();
@@ -173,71 +165,38 @@ void merge_2file(ifstream &file_1, ifstream &file_2, ofstream &fout){
 }
 
 int main(){
-	//tiet kiem bo nho
-	//remove("Books_rating.csv");
-	//after split Book_rating.csv into 10 smaller file
 	ifstream fin_1, fin_2, fin_3;
 	ofstream fout_1;
-	int length_vector;
-	string title = "Id,Title,Price,User_id,profileName,review/helpfulness,review/score,review/time,review/summary,review/text";
-	//sort each file
-	for(int i = 1; i <= 10; i++){
-		string x = "file_split_" + to_string(i) + ".csv";
-		fin_1.open(x, ios::in);
-		read_data_from_file(result, fin_1);
-		length_vector = result.size() - 1;
-		quick_sort(result, 0, length_vector);
-		fout_1.open(x, ios::out);
-		write_data_from_vector_into_file(result, fout_1);
+	string title = "", x;
+	fin_1.open("Books_rating.csv", ios::in|ios::binary);
+	//lay dong dau tien cua file Books_rating.csv
+	getline(fin_1, title);
+	//thao tac chia va sort file
+	int index = 0, number_file = 1;
+	while(!fin_1.eof()){
+		index++;
+		getline(fin_1, x);
+		result.push_back(x);
+		if(index == 1000000){
+			quicksort(result, 0, index - 1);
+			string name_file = "split_file_" + to_string(number_file) + ".csv";
+			number_file++;
+			fout_1.open(name_file, ios::in|ios::binary);
+			//lưu dữ liệu đã sort lên file
+			write_data_from_vector_into_file(result, fout_1);
+			index = 0;
+		}
 	}
-
-	//merge file_split_ 1, 2, 3 into file_result_123.csv after that delete these three files
-	fin_1.open("file_split_1.csv", ios::in);
-	fin_2.open("file_split_2.csv", ios::in);
-	fin_3.open("file_split_3.csv", ios::in);
-	fout_1.open("file_result_123.csv", ios::out);
+	//merge du lieu tu ba file da duoc luu truoc do
+	fin_1.open("split_file_1.csv", ios::in|ios::binary);
+	fin_2.open("split_file_1.csv", ios::in|ios::binary);
+	fin_3.open("split_file_1.csv", ios::in|ios::binary);
+	fout_1.open("sorted_books_rating.csv", ios::out)
+	fout << title << endl;
 	merge_3file(fin_1, fin_2, fin_3, fout_1);
-	remove("file_split_1.csv");
-	remove("file_split_2.csv");
-	remove("file_split_3.csv");
-
-	//merge file_split_ 4, 5, 6 into file_result_456.csv after that delete these three files
-	fin_1.open("file_split_4.csv", ios::in);
-	fin_2.open("file_split_5.csv", ios::in);
-	fin_3.open("file_split_6.csv", ios::in);
-	fout_1.open("file_result_456.csv", ios::out);
-	merge_3file(fin_1, fin_2, fin_3, fout_1);
-	remove("file_split_4.csv");
-	remove("file_split_5.csv");
-	remove("file_split_6.csv");
-
-	//merge file_split_ 7, 8, 9 into file_result_789.csv after that delete these three files
-	fin_1.open("file_split_7.csv", ios::in);
-	fin_2.open("file_split_8.csv", ios::in);
-	fin_3.open("file_split_9.csv", ios::in);
-	fout_1.open("file_result_789.csv", ios::out);
-	merge_3file(fin_1, fin_2, fin_3, fout_1);
-	remove("file_split_7.csv");
-	remove("file_split_8.csv");
-	remove("file_split_9.csv");
-
-	//merge file file_result_123, 456, 789 into file_result_all.csv after that delete these three files
-	fin_1.open("file_result_123.csv", ios::in);
-	fin_2.open("file_result_456.csv", ios::in);
-	fin_3.open("file_result_789.csv", ios::in);
-	fout_1.open("file_result_all.csv", ios::out);
-	merge_3file(fin_1, fin_2, fin_3, fout_1);
-	remove("file_result_123.csv");
-	remove("file_result_456.csv");
-	remove("file_result_789.csv");
-
-	//merge file_split_10.csv and file_result_all into sorted_books_rating.csv after that remove these two files
-	fin_1.open("file_result_all.csv", ios:: in);
-	fin_2.open("file_split_10.csv", ios::in);
-	fout_1.open("sorted_books_rating.csv", ios::out);
-	fout_1 << title << endl;
-	merge_2file(fin_1, fin_2, fout_1);
-	remove("file_result_all.csv");
-	remove("file_split_10.csv");
+	for(int i = 1; i <= 3; i++){
+		string name_file = "split_file_" + to_string(i) + ".csv";
+		remove(name_file);
+	}
 }
 
