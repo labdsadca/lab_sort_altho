@@ -139,31 +139,6 @@ void merge_3file(ifstream &file_1, ifstream &file_2, ifstream &file_3, ofstream 
 	fout.close();
 }
 
-void merge_2file(ifstream &file_1, ifstream &file_2, ofstream &fout){
-	string x; getline(file_1, x);
-	string y; getline(file_2, y);
-	while(!file_1.eof() && !file_2.eof()){
-		if(compare_id(x, y) != 1){
-			fout << x << endl;
-			getline(file_1, x);
-		}
-		else{
-			fout << y << endl;
-			getline(file_2, y);
-		}
-	}
-	while(!file_1.eof()){
-		fout << x << endl;
-		getline(file_1, x);
-	}
-	while(!file_2.eof()){
-		fout << y << endl;
-		getline(file_2, y);
-	}
-	file_1.close(); file_2.close();
-	fout.close();
-}
-
 int main(){
 	ifstream fin_1, fin_2, fin_3;
 	ofstream fout_1;
@@ -187,14 +162,16 @@ int main(){
 			index = 0;
 		}
 	}
+	fin_1.close();
 	//merge du lieu tu ba file da duoc luu truoc do
 	fin_1.open("split_file_1.csv", ios::in|ios::binary);
 	fin_2.open("split_file_1.csv", ios::in|ios::binary);
 	fin_3.open("split_file_1.csv", ios::in|ios::binary);
-	fout_1.open("sorted_books_rating.csv", ios::out)
+	fout_1.open("sorted_books_rating.csv", ios::out|ios::binary);
 	fout << title << endl;
 	merge_3file(fin_1, fin_2, fin_3, fout_1);
-	for(int i = 1; i <= 3; i++){
+	//xoa nhung file da chia
+	for(int i = 1; i < number_file; i++){
 		string name_file = "split_file_" + to_string(i) + ".csv";
 		remove(name_file);
 	}
