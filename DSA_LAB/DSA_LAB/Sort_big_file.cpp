@@ -23,7 +23,7 @@ int compare_id(string s, string s1){
 	return id.compare(id1);
 }
 
-void quick_sort(vector<int> &v, int l, int r){
+void quick_sort(vector<string> &v, int l, int r){
 	if(l >= r) return;
 	string pivot = v[rand()%(r - l + 1) + l];
 	int i = l, j = r;
@@ -44,7 +44,7 @@ void quick_sort(vector<int> &v, int l, int r){
 }
 
 void write_data_from_vector_into_file(vector<string> &result, ofstream &file_out){
-	for(int  i = 0; i < 1000000, i++){
+	for(int  i = 0; i < 1000000; i++){
 		file_out << result[i];
 		if( i != 1000000 - 1){
 			file_out << endl;
@@ -153,7 +153,7 @@ int main(){
 		getline(fin_1, x);
 		result.push_back(x);
 		if(index == 1000000){
-			quicksort(result, 0, index - 1);
+			quick_sort(result, 0, index - 1);
 			string name_file = "split_file_" + to_string(number_file) + ".csv";
 			number_file++;
 			fout_1.open(name_file, ios::in|ios::binary);
@@ -168,12 +168,11 @@ int main(){
 	fin_2.open("split_file_1.csv", ios::in|ios::binary);
 	fin_3.open("split_file_1.csv", ios::in|ios::binary);
 	fout_1.open("sorted_books_rating.csv", ios::out|ios::binary);
-	fout << title << endl;
+	fout_1 << title << endl;
 	merge_3file(fin_1, fin_2, fin_3, fout_1);
 	//xoa nhung file da chia
-	for(int i = 1; i < number_file; i++){
-		string name_file = "split_file_" + to_string(i) + ".csv";
-		remove(name_file);
-	}
+	remove("split_file_1.csv");
+	remove("split_file_2.csv");
+	remove("split_file_3.csv");
 }
 
