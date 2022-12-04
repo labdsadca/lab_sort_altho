@@ -156,7 +156,7 @@ int main(){
 			quick_sort(result, 0, index - 1);
 			string name_file = "split_file_" + to_string(number_file) + ".csv";
 			number_file++;
-			fout_1.open(name_file, ios::in|ios::binary);
+			fout_1.open(name_file, ios::out|ios::binary);
 			//lưu dữ liệu đã sort lên file
 			write_data_from_vector_into_file(result, fout_1);
 			index = 0;
