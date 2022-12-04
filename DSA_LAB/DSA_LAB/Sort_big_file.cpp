@@ -165,8 +165,8 @@ int main(){
 	fin_1.close();
 	//merge du lieu tu ba file da duoc luu truoc do
 	fin_1.open("split_file_1.csv", ios::in|ios::binary);
-	fin_2.open("split_file_1.csv", ios::in|ios::binary);
-	fin_3.open("split_file_1.csv", ios::in|ios::binary);
+	fin_2.open("split_file_2.csv", ios::in|ios::binary);
+	fin_3.open("split_file_3.csv", ios::in|ios::binary);
 	fout_1.open("sorted_books_rating.csv", ios::out|ios::binary);
 	fout_1 << title << endl;
 	merge_3file(fin_1, fin_2, fin_3, fout_1);
